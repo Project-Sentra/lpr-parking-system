@@ -1,11 +1,53 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+
+// [අවධානයට]: මෙම පරිසරයේ පින්තූර නොමැති නිසා පහත imports comment කර ඇත.
+// ඔබේ VS Code හිදී පහත පේළි දෙක uncomment කරන්න.
 import LogoMain from "../assets/logo_main.png";
 import LogoNoText from "../assets/logo_notext.png";
+
+// [අවධානයට]: ඉහත imports uncomment කළ පසු, මෙම තාවකාලික පේළි දෙක මකා දමන්න.
+//const LogoMain = ""; 
+//const LogoNoText = "";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(""); // Error message පෙන්වන්න
+  const navigate = useNavigate();
+
+  const handleLogin = async () => {
+    setError(""); // කලින් තිබුන errors අයින් කරනවා
+
+    try {
+      // Backend API එකට data යවනවා
+      const response = await axios.post("http://127.0.0.1:5000/api/login", {
+        email: email,
+        password: password,
+      });
+
+      // Login සාර්ථක නම් (Status 200)
+      if (response.status === 200) {
+        console.log("Login Successful:", response.data);
+
+        // User details browser එකේ save කරගන්න
+        localStorage.setItem("userEmail", response.data.email);
+        localStorage.setItem("userRole", response.data.role);
+
+        // Dashboard එකට redirect කරනවා
+        navigate("/");
+      }
+    } catch (err) {
+      console.error("Login Failed:", err);
+      // Backend එකෙන් එවන error message එක පෙන්වනවා
+      if (err.response && err.response.data) {
+        setError(err.response.data.message);
+      } else {
+        setError("Login failed. Please check your connection.");
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-sentraBlack flex items-center justify-center px-6">
@@ -34,6 +76,13 @@ export default function SignIn() {
                 </Link>
               </div>
 
+              {/* Error Message Display Area */}
+              {error && (
+                <div className="w-full bg-red-500/10 border border-red-500 text-red-400 text-sm p-2 rounded text-center">
+                  {error}
+                </div>
+              )}
+
               <div className="w-full mt-3">
                 <label className="sr-only">Email</label>
                 <input
@@ -57,6 +106,7 @@ export default function SignIn() {
               </div>
 
               <button
+                onClick={handleLogin}
                 className="w-full mt-4 bg-sentraYellow text-black font-semibold rounded-md py-3 hover:brightness-95 transition"
                 aria-label="Sign in"
               >

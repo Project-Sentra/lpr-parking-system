@@ -10,7 +10,7 @@ import LiveFeed from './pages/admin/LiveFeed'
 
 export default function App() {
   return (
-    <div className='bg-sentraBlack h-full'>
+    <div className='bg-[#111] min-h-screen text-white font-poppins'>
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='signin' element={<SignIn/>}/>

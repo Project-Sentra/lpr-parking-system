@@ -4,38 +4,36 @@ import ProgressBar from "./ProgressBar";
 
 export default function FacilityCard({ facility }) {
   const { id, name, revenueLKR, capacityPct = 0, status = "Active" } = facility;
+  
   return (
     <Link
       to={`/admin/${id}`}
-      className="group block bg-[#171717] rounded-2xl p-5 border border-[#232323] hover:border-sentraYellow/60 transition"
+      className="group block bg-[#171717] rounded-2xl p-6 border border-[#232323] hover:border-[#e2e600]/50 transition"
     >
-      <div className="text-white text-3xl leading-9 font-semibold">
-        {name.split(" ").slice(0, -1).join(" ")}
-        <br />
-        {name.split(" ").slice(-1)}
-      </div>
-      <div className="text-sm text-gray-400 mt-2">Parking ID #{String(id).padStart(3, "0")}</div>
-
-      <div className="mt-4 text-xs text-gray-400">Capacity meter</div>
-      <div className="mt-2 flex items-center gap-3">
-        <div className="w-24">
-          <ProgressBar value={capacityPct} />
+      <div className="flex justify-between items-start">
+        <div>
+          <h3 className="text-xl text-white font-semibold">{name}</h3>
+          <p className="text-xs text-gray-500 mt-1">ID #{String(id).padStart(3, "0")}</p>
         </div>
-        <div className="text-gray-500 text-xs">{capacityPct}%</div>
-      </div>
-
-      <div className="mt-4 text-gray-300">
-        <div className="text-sm">Day’s revenue</div>
-        <span className="inline-block mt-2 text-xs bg-[#232323] rounded-full px-3 py-1 text-sentraYellow">
-          LKR {revenueLKR?.toLocaleString?.("en-LK") ?? revenueLKR}
+        <span className={`px-2 py-1 rounded text-xs ${status==='Active' ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'}`}>
+          {status}
         </span>
       </div>
 
-      <div className="mt-4 flex items-center justify-between text-sm text-gray-400">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-sentraYellow inline-block" /> {status}
+      <div className="mt-6">
+        <div className="flex justify-between text-xs text-gray-400 mb-2">
+          <span>Capacity</span>
+          <span>{capacityPct}%</span>
         </div>
-        <span className="opacity-50 group-hover:opacity-100">›</span>
+        <ProgressBar value={capacityPct} />
+      </div>
+
+      <div className="mt-6 pt-4 border-t border-[#232323] flex justify-between items-end">
+        <div>
+          <p className="text-xs text-gray-500">Revenue (Today)</p>
+          <p className="text-[#e2e600] font-medium mt-1">LKR {revenueLKR.toLocaleString()}</p>
+        </div>
+        <span className="text-gray-600 group-hover:text-white transition">View →</span>
       </div>
     </Link>
   );
