@@ -1,22 +1,53 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+
+// [අවධානයට]: මෙම පරිසරයේ පින්තූර නොමැති නිසා පහත imports comment කර ඇත.
+// ඔබේ VS Code හිදී පහත පේළි දෙක uncomment කරන්න.
 import LogoMain from "../assets/logo_main.png";
 import LogoNoText from "../assets/logo_notext.png";
+
+// [අවධානයට]: ඉහත imports uncomment කළ පසු, මෙම තාවකාලික පේළි දෙක මකා දමන්න.
+//const LogoMain = ""; 
+//const LogoNoText = "";
 
 export default function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [error, setError] = useState(""); // Error state
+  const navigate = useNavigate();
 
   const passwordsMatch = password.length > 0 && password === confirm;
   const canSubmit = name && email && password && confirm && passwordsMatch;
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (!canSubmit) return;
-    // TODO: Hook up to your signup API
-    console.log("Signing up", { name, email });
+    setError("");
+
+    try {
+      // Backend එකට දත්ත යැවීම
+      const response = await axios.post("http://127.0.0.1:5000/api/signup", {
+        email: email,
+        password: password,
+      });
+
+      // සාර්ථක නම් (Status 201)
+      if (response.status === 201) {
+        console.log("Signup Successful");
+        // Login page එකට යොමු කිරීම
+        navigate("/signin");
+      }
+    } catch (err) {
+      console.error("Signup Failed:", err);
+      if (err.response && err.response.data) {
+        setError(err.response.data.message); // උදා: "User already exists!"
+      } else {
+        setError("Registration failed. Please try again.");
+      }
+    }
   }
 
   return (
@@ -45,6 +76,13 @@ export default function SignUp() {
                   SIGN UP
                 </button>
               </div>
+
+              {/* Error Message Display */}
+              {error && (
+                <div className="w-full bg-red-500/10 border border-red-500 text-red-400 text-sm p-2 rounded text-center">
+                  {error}
+                </div>
+              )}
 
               <form className="w-full mt-3 space-y-3" onSubmit={handleSubmit}>
                 <label className="sr-only">Name</label>
@@ -88,7 +126,9 @@ export default function SignUp() {
                 />
 
                 {!passwordsMatch && confirm && (
-                  <p className="text-xs text-red-400">Passwords do not match.</p>
+                  <p className="text-xs text-red-400">
+                    Passwords do not match.
+                  </p>
                 )}
 
                 <button
