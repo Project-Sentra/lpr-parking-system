@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../services/api";
 import Sidebar from "../../components/Sidebar";
 import ParkingMap from "../../components/ParkingMap";
-
-const API_BASE = "http://127.0.0.1:5000";
 
 const formatTime = (value) =>
   value ? new Date(value).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "—";
@@ -26,7 +24,7 @@ export default function InOut() {
 
   async function fetchLogs() {
     try {
-      const { data } = await axios.get(`${API_BASE}/api/logs`);
+      const { data } = await api.get("/logs");
       setLogs(data?.logs ?? []);
       setError(null);
     } catch (err) {
@@ -39,7 +37,7 @@ export default function InOut() {
 
   async function fetchSpots() {
     try {
-      const { data } = await axios.get(`${API_BASE}/api/spots`);
+      const { data } = await api.get("/spots");
       setSpots(data?.spots ?? []);
     } catch (err) {
       console.error("Failed to fetch spots", err);

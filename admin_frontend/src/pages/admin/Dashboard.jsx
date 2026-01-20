@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../services/api";
 import Sidebar from "../../components/Sidebar";
 import ParkingMap from "../../components/ParkingMap";
 import lprService from "../../services/lprService";
@@ -13,7 +13,7 @@ export default function Dashboard() {
 
   async function fetchSpots() {
     try {
-      const { data } = await axios.get("http://127.0.0.1:5000/api/spots");
+      const { data } = await api.get("/spots");
       setSpots(data?.spots ?? []);
       setError(null);
     } catch (err) {
