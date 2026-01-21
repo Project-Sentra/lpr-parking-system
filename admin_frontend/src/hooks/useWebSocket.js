@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 
-const WS_URL = "ws://127.0.0.1:5001/api/ws";
+const WS_URL = import.meta.env.VITE_WS_URL || "ws://127.0.0.1:5001/api/ws";
 
 /**
  * Custom hook for WebSocket connection to SentraAI service

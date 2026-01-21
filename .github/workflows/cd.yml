@@ -63,6 +63,9 @@ jobs:
           tags: |
             ${{ steps.login-ecr.outputs.registry }}/${{ env.PROJECT_NAME }}-frontend:${{ steps.set-tag.outputs.tag }}
             ${{ steps.login-ecr.outputs.registry }}/${{ env.PROJECT_NAME }}-frontend:latest
+          build-args: |
+            VITE_API_URL=/api
+            VITE_WS_URL=/ws
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
